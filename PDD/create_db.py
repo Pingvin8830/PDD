@@ -63,6 +63,14 @@ is_db:     %s
     CON.commit ()
     self.__init__ (ident = self.id)
 
+  def delete (self):
+    if not self.is_db ():
+      print ('Question not in db.')
+      return
+    CUR.execute ('DELETE FROM questions WHERE id = %d' % self.id)
+    CON.commit ()
+    self.__init__ (ticket = self.ticket, number = self.number)
+
 class Answer ():
   '''Варианты ответов'''
   def __init__ (self, ident = 0, ticket = 0, question = 0, number = 0):
@@ -85,7 +93,10 @@ class Answer ():
       self.number        = int (number)
       try:    self.id    = CUR.execute ('SELECT id      FROM answers WHERE ticket = %d AND question = %d AND number = %d' % (self.ticket, self.question, self.number)).fetchone () [0]
       except: self.id    = CUR.execute ('SELECT max(id) FROM answers').fetchone () [0] + 1
-    try:    self.text    = CUR.execute ('SELECT text    FROM answers WHERE id = %d' % self.id).fetchone () [0]
+    try:
+      self.text    = CUR.execute ('SELECT text    FROM answers WHERE id = %d' % self.id).fetchone () [0]
+      while len (self.text) < 68:
+        self.text = self.text + ' '
     except: self.text    = None
     try:    self.is_true = CUR.execute ('SELECT is_true FROM answers WHERE id = %d' % self.id).fetchone () [0]
     except: self.is_true = 0
@@ -123,6 +134,14 @@ is_db:    %s
     CON.commit ()
     self.__init__ (ident = self.id)
 
+  def delete (self):
+    if not self.is_db ():
+      print ('Answer now in db.')
+      return
+    CUR.execute ('DELETE FROM answers WHERE id = %d' % self.id)
+    CON.commit ()
+    self.__init__ (ticket = self.ticket, question = self.question, number = self.number)
+
 def readImage (filename):
   try:
     fin = open (filename, 'rb')
@@ -134,8 +153,8 @@ def readImage (filename):
     if fin:
       fin.close ()
       
-for ticket in range (1):
-  tn = ticket + 31
+for ticket in range (4):
+  tn = ticket + 37
   print (tn)
   if tn < 10: tnn = '0%d' % tn
   else:       tnn = str (tn)
@@ -154,7 +173,12 @@ for ticket in range (1):
       binary = None
     CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
     CON.commit ()
-    if new_text: qo.update ('text', new_text)
+    if new_text:
+      if new_text != ' ':
+        qo.write ()
+        qo.update ('text', new_text)
+      else:
+        qo.delete ()
     qo = Question (ident = qo.id)
     print (qo)
     for answer in range (5):
@@ -164,8 +188,11 @@ for ticket in range (1):
       new_text = input (str (ao.text) + ': ')
       #new_text = None
       if new_text:
-        ao.write ()
-        ao.update ('text', new_text)
+        if new_text != ' ':
+          ao.write ()
+          ao.update ('text', new_text)
+        else:
+          ao.delete ()
       print ()
     try:    good = int (input ('Укажите номер ответа: '))
     except: good = None
