@@ -11,9 +11,11 @@ conf = RawConfigParser ()
 try:
   conf.read ('W:/Общая/VAA/python/my_progs/PDD/PDD.conf')
   CONF = 'W:/Общая/VAA/python/my_progs/PDD/PDD.conf'
+  test = conf.get ('FONT', 'name')
 except:
-  conf.read ('/data/shells/python/configs/PDD.conf')
-  CONF = '/data/shells/python/configs/PDD.conf'
+  conf.read ('/data/git/PDD/PDD/PDD.conf')
+  CONF = '/data/git/PDD/PDD/PDD.conf'
+  test = conf.get ('FONT', 'name')
 
 def set_var ():
   global FONT
