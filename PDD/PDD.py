@@ -4,6 +4,7 @@ from   tkinter      import *
 from   random       import randrange
 from   PIL          import Image, ImageTk
 from   configparser import RawConfigParser
+from   datetime     import datetime
 import sqlite3      as     lite
 
 conf = RawConfigParser ()
@@ -19,31 +20,63 @@ def set_var ():
   global CON
   global CUR
   global IMAGE
+  global TITLE
   global SIZE
-  FONT  = (conf.get ('FONT', 'name'), conf.getint ('FONT', 'size'))
+  global LOG
+  FONT = (conf.get ('FONT', 'name'), conf.getint ('FONT', 'size'))
   try:
-    CON   = lite.connect ('%s/%s' % (conf.get ('DATABASE', 'path'), conf.get ('DATABASE', 'name')))
-    CUR   = CON.cursor ()
+    CON = lite.connect ('%s/%s' % (conf.get ('DATABASE', 'path'), conf.get ('DATABASE', 'name')))
+    CUR = CON.cursor ()
   except:
     print ('Database not found!')
-  IMAGE = '%s/%s' % (conf.get ('TMP', 'path'), conf.get ('TMP', 'image'))
+  IMAGE = '%s/%s'       % (conf.get    ('TMP',    'path'),  conf.get    ('TMP',    'image'))
+  TITLE = conf.get ('WINDOW', 'title')
   SIZE  = '%dx%d+%d+%d' % (conf.getint ('WINDOW', 'width'), conf.getint ('WINDOW', 'height'), conf.getint ('WINDOW', 'x_step'), conf.getint ('WINDOW', 'y_step'))
+  LOG   = '%s/%s'       % (conf.get    ('LOG',    'path'),  conf.get    ('LOG',    'name'))
+  write_log ('Vars set at start values')
+  write_log ('''
+FONT:     %s
+DATABASE: %s/%s
+IMAGE:    %s
+WINDOW:   %s, %s
+''' % (
+  FONT,
+  conf.get ('DATABASE', 'path'), conf.get ('DATABASE', 'name'),
+  IMAGE,
+  TITLE, SIZE
+  ), False
+             )
 
 def gui_exit ():
   window.destroy ()
+  write_log ('Destroy window')
 
 def write_image (data):
   file = open (IMAGE, 'wb')
   file.write (data)
   file.close ()
+  write_log ('Image write')
 
+def write_log (string, date = True):
+  while len (string) < 60:
+    string += ' '
+  file = open (LOG, 'a', encoding = 'utf-8')
+  file.write (string)
+  if date:
+    file.write (' %s\n' % datetime.today ())
+  else:
+    file.write ('\n')
+  file.close ()
+  
 def main (type_gui = 'main'):
   global window
   set_var ()
+  write_log ('Start programm')
+  write_log ('Result: BAD')
   window = Tk ()
   if   type_gui == 'main': app = MainMenu (window)
   elif type_gui == 'conf': app = Settings (window)
-  window.title (conf.get ('WINDOW', 'title'))
+  window.title (TITLE)
   window.geometry (SIZE)
   window.mainloop ()
   CON.close ()
@@ -71,6 +104,7 @@ class Question ():
     except: self.image  = None
     try:    self.text   = CUR.execute ('SELECT text   FROM questions WHERE id = %d' % self.id).fetchone () [0]
     except: self.text   = None
+    write_log ('Init question with id %d' % self.id)
 
   def __str__ (self):
     if self.image: is_image = True
@@ -97,6 +131,7 @@ is_db:     %s
     CUR.execute ('INSERT INTO questions VALUES (?, ?, ?, ?, ?)', (self.id, self.ticket, self.number, self.text, self.image))
     CON.commit ()
     self.__init__ (ident = self.id)
+    write_log ('Write question with id %d' % self.id)
 
   def update (self, field, value):
     if not self.is_db ():
@@ -105,6 +140,7 @@ is_db:     %s
     CUR.execute ('UPDATE questions SET %s = "%s" WHERE id = %d' % (field, value, self.id))
     CON.commit ()
     self.__init__ (ident = self.id)
+    write_log ('Update question with id %d' % self.id)
 
   def delete (self):
     if not self.is_db ():
@@ -112,6 +148,7 @@ is_db:     %s
       return
     CUR.execute ('DELETE FROM questions WHERE id = %d' % self.id)
     CON.commit ()
+    write_log ('Delete question with id %d' % self.id)
     self.__init__ (ticket = self.ticket, number = self.number)
 
 class Answer ():
@@ -143,7 +180,8 @@ class Answer ():
     except: self.text    = None
     try:    self.is_true = CUR.execute ('SELECT is_true FROM answers WHERE id = %d' % self.id).fetchone () [0]
     except: self.is_true = 0
-
+    write_log ('Init answer   with id %d' % self.id)
+    
   def __str__ (self):
     return '''
 id:       %d
@@ -168,6 +206,7 @@ is_db:    %s
     CUR.execute ('INSERT INTO answers VALUES (?, ?, ?, ?, ?, ?)', (self.id, self.ticket, self.question, self.number, self.is_true, self.text))
     CON.commit ()
     self.__init__ (ident = self.id)
+    write_log ('Write answer with id %d' % self.id)
 
   def update (self, field, value):
     if not self.is_db ():
@@ -176,6 +215,7 @@ is_db:    %s
     CUR.execute ('UPDATE answers SET %s = "%s" WHERE id = %d' % (field, value, self.id))
     CON.commit ()
     self.__init__ (ident = self.id)
+    write_log ('Update answer with id %d' % self.id)
 
   def delete (self):
     if not self.is_db ():
@@ -183,6 +223,7 @@ is_db:    %s
       return
     CUR.execute ('DELETE FROM answers WHERE id = %d' % self.id)
     CON.commit ()
+    write_log ('Delete answer with id %d' % self.id)
     self.__init__ (ticket = self.ticket, question = self.question, number = self.number)
 
 class MyRadio (Radiobutton):
@@ -221,6 +262,7 @@ class MainMenu (Frame):
     super (MainMenu, self).__init__ (master)
     self.create_widgets ()
     self.grid           ()
+    write_log ('Create main menu')
 
   def create_widgets (self):
     '''Создание виджетов'''
@@ -233,11 +275,13 @@ class MainMenu (Frame):
 
   def test (self):
     '''Тест'''
+    write_log ('Switch start test')
     self.destroy ()
     self = Test (self.master)
 
   def settings (self):
     '''Настройки'''
+    write_log ('Switch settings')
     self.destroy ()
     self = Settings (self.master)
 
@@ -247,6 +291,7 @@ class Settings (Frame):
     super (Settings, self).__init__ (master)
     self.create_widgets ()
     self.grid ()
+    write_log ('Create settings menu')
 
   def create_widgets (self):
     '''Создание виджетов'''
@@ -307,6 +352,7 @@ class Settings (Frame):
         
   def save (self):
     '''Сохранение настроек'''
+    write_log ('Switch save')
     conf.set ('FONT',     'name',      self.font_name_ent.get ())
     conf.set ('FONT',     'size',      self.font_size_ent.get ())
     conf.set ('DATABASE', 'path',      self.db___path_ent.get ())
@@ -333,6 +379,7 @@ class Settings (Frame):
     main ('conf')
 
   def main_menu (self):
+    write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
             
@@ -343,10 +390,13 @@ class Test (Frame):
     self.questions = [0]
     for question in range (conf.getint ('QUESTION', 'count')):
       qn = question + conf.getint ('QUESTION', 'start')
-      self.questions.append (Question (ticket = randrange (conf.getint ('TICKET', 'count')) + conf.getint ('TICKET', 'start'), number = qn))
+      qo = Question (ticket = randrange (conf.getint ('TICKET', 'count')) + conf.getint ('TICKET', 'start'), number = qn)
+      self.questions.append (qo)
+      write_log ('Add  question with id %d in test' % qo.id)
     self.answers  = [0]
     self.errors   = [0]
     self.create_widgets ()
+    write_log ('Create test menu')
     self.get_question   ()
     self.grid           ()
 
@@ -386,12 +436,15 @@ class Test (Frame):
     self.ans_5_rad.grid_remove ()
     self.ans_5_lbl.grid_remove ()
     question = self.questions [len (self.answers)]
+    write_log ('Get  question with id %d' % question.id)
     self.good_answer = 0
     for answer in range (conf.getint ('ANSWER', 'count')):
       an = answer + conf.getint ('ANSWER', 'start')
       ao = Answer (ticket = question.ticket, question = question.number, number = an)
+      write_log ('Add  answer   with id %d to question with id %d' % (ao.id, question.id))
       if ao.is_true:
         self.good_answer = an
+        write_log ('It is true answer')
       if ao.text:
         if   an == 1: self.ans_1_lbl ['text'] = ao.text; self.ans_1_rad.grid (row = 4, sticky = W); self.ans_1_lbl.grid (row = 4, column = 1, sticky = W)
         elif an == 2: self.ans_2_lbl ['text'] = ao.text; self.ans_2_rad.grid (row = 5, sticky = W); self.ans_2_lbl.grid (row = 5, column = 1, sticky = W)
@@ -415,20 +468,26 @@ class Test (Frame):
         
   def save_answer (self):
     '''Сохранение ответа'''
+    write_log ('Switch done')
     if self.answer.get () == 'None': return
     self.answers [0] += 1
     self.answers.append (int (self.answer.get ()))
+    write_log ('User answer: %s' % self.answer.get ())
+    write_log ('Good answer: %d' % self.good_answer)
     if int (self.answer.get ()) != self.good_answer:
       self.errors [0] += 1
       self.errors.append (self.questions [self.answers [0]])
+      write_log ('Add error answer to question with id %d' % self.questions [self.answers [0]].id)
     if self.answers [0] < conf.getint ('QUESTION', 'count'):
       self.get_question ()
     else:
+      write_log ('It was last question')
       self.destroy ()
       self = Result (self.master, self.answers, self.errors)
         
   def main_menu (self):
     '''Выход в главное меню'''
+    write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
 
@@ -440,12 +499,17 @@ class Result (Frame):
     self.errors  = errors
     self.create_widgets ()
     self.grid ()
+    write_log ('Create result menu')
 
   def result (self):
     '''Подводит итоги'''
+    write_log ('Count errors: %d' % self.errors [0])
+    write_log ('Max   errors: %d' % conf.getint ('LOGIC', 'max_error'))
     if self.errors [0] <= conf.getint ('LOGIC', 'max_error'):
+      write_log ('Result: OK')
       return 'Экзамен сдан'
     else:
+      write_log ('Result: BAD')
       return 'Переэкзаменовка'
 
   def create_widgets (self):
@@ -459,11 +523,13 @@ class Result (Frame):
 
   def more (self):
     '''Вывод подробностей'''
+    write_log ('Switch more information')
     self.destroy ()
     self = More (self.master, self.answers, self.errors)
 
   def main_menu (self):
     '''Выход в главное меню'''
+    write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
 
@@ -475,6 +541,7 @@ class More (Frame):
     self.errors  = errors
     self.create_widgets ()
     self.grid ()
+    write_log ('Create more information menu')
 
   def create_widgets (self):
     '''Создание виджетов'''
@@ -500,7 +567,10 @@ class More (Frame):
 
   def main_menu (self):
     '''Выход в главное меню'''
+    write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
 
 main ()
+write_log ('Stop programm')
+write_log ('---------------------------------------------------------------------------------------', False)
