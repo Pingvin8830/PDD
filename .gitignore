@@ -1,7 +1,7 @@
 __pycache__
-.pyc
-.swp
-now.jpg
-images
+*.pyc
+*.swp
+*.jpg
+*.gif
 *old*
-*log
+*.log
