@@ -9,8 +9,8 @@ import sqlite3      as     lite
 
 conf = RawConfigParser ()
 try:
-  conf.read ('W:/Общая/VAA/python/my_progs/PDD/PDD.conf')
-  CONF = 'W:/Общая/VAA/python/my_progs/PDD/PDD.conf'
+  conf.read ('W:/Общая/VAA/python/my_progs/PDD/PDD_win.conf')
+  CONF = 'W:/Общая/VAA/python/my_progs/PDD/PDD_win.conf'
   test = conf.get ('FONT', 'name')
 except:
   conf.read ('/data/git/PDD/PDD/PDD.conf')
@@ -547,11 +547,11 @@ class More (Frame):
 
   def create_widgets (self):
     '''Создание виджетов'''
-    mes = '      Ошибки при прохождении теста\n\n'
-    mes += 'Количество ошибок:                  %d\n\n' % self.errors [0]
-    mes += '+-----+------+---------+------------+\n'
-    mes += '|Билет|Вопрос|Ваш ответ|Верный ответ|\n'
-    mes += '+-----+------+---------+------------+\n'
+    mes = '      Ошибки при прохождении теста     \n\n'
+    mes += 'Количество ошибок:                 %d \n\n' % self.errors [0]
+    mes += '+-----+------+---------+------------+ \n'
+    mes += '|Билет|Вопрос|Ваш ответ|Верный ответ| \n'
+    mes += '+-----+------+---------+------------+ \n'
     for question in self.errors [1:]:
       ticket = str (question.ticket)
       number = str (question.number)
@@ -561,8 +561,8 @@ class More (Frame):
         good_answer = answer + 1
         ao = Answer (ticket = question.ticket, question = question.number, number = good_answer)
         if ao.is_true: break
-      mes += '|   %s|    %s|        %d|           %d|\n' % (ticket, number, self.answers [question.number], good_answer)
-    mes += '+-----+------+---------+------------+\n\n'
+      mes += '|   %s|    %s|        %d|           %d| \n' % (ticket, number, self.answers [question.number], good_answer)
+    mes += '+-----+------+---------+------------+ \n\n'
     self.table_mes = MyMessage (self,         cs = 2, text = mes)
     self.main_bttn = MyButton  (self, rw = 1,         text = 'Главное меню', command = self.main_menu)
     self.exit_bttn = MyButton  (self, rw = 1, cl = 1, text = '    Выход   ', command = gui_exit)
