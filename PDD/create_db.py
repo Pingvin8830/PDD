@@ -56,7 +56,7 @@ is_db:     %s
     if self.is_db ():
       print ('Question now in db.')
       return
-    CUR.execute ('INSERT INTO questions VALUES (?, ?, ?, ?, ?)', (self.id, self.ticket, self.number, self.text, self.image))
+    CUR.execute ('INSERT INTO questions VALUES (?, ?, ?, ?, ?, ?)', (self.id, self.ticket, self.number, self.text, self.image, self.comment))
     CON.commit ()
     self.__init__ (ident = self.id)
 
@@ -158,8 +158,8 @@ def readImage (filename):
     if fin:
       fin.close ()
       
-for ticket in range (1):
-  tn = ticket + 14
+for ticket in range (40):
+  tn = ticket + 1
   print (tn)
   if tn < 10: tnn = '0%d' % tn
   else:       tnn = str (tn)
@@ -169,8 +169,10 @@ for ticket in range (1):
     if qn < 10: qnn = '0%d' % qn
     else:       qnn = str (qn)
     qo = Question (ticket = tn, number = qn)
-    new_text    = input ('text: '    + str (qo.text)    + ': ')
-    new_comment = input ('comment: ' + str (qo.comment) + ': ')
+    #new_text    = input ('text:    ' + str (qo.text)    + ': ')
+    new_text    = None
+    #new_comment = input ('comment: ' + str (qo.comment) + ': ')
+    new_comment = None
     try:
       if OS == 'linux': image = readImage ('/data/git/PDD/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
       else:             image = readImage ( 'W:/Общая/VAA/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
@@ -183,8 +185,9 @@ for ticket in range (1):
         qo.update ('text', new_text)
         if new_comment: qo.update ('comment', new_comment)
         CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
-      else:
-        qo.delete ()
+    #  else:
+    #    qo.delete ()
+    CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
     CON.commit ()
     qo = Question (ident = qo.id)
     print (qo)
@@ -192,7 +195,8 @@ for ticket in range (1):
       an = answer + 1
       print (tn, qn, an)
       ao = Answer (ticket = tn, question = qn, number = an)
-      new_text = input (str (ao.text) + ': ')
+      #new_text = input (str (ao.text) + ': ')
+      new_text = None
       if new_text:
         if new_text != ' ':
           ao.write ()
@@ -200,8 +204,9 @@ for ticket in range (1):
         else:
           ao.delete ()
       print ()
-    try:    good = int (input ('Укажите номер ответа: '))
-    except: good = None
+    #try:    good = int (input ('Укажите номер ответа: '))
+    #except: good = None
+    good = None
     for answer in range (5):
       an = answer + 1
       print (tn,qn,an)
@@ -216,7 +221,7 @@ if OS == 'linux': image = readImage ('/data/git/PDD/PDD/images/text.gif')
 else:             image = readImage ( 'W:/Общая/VAA/PDD/images/text.gif')
 binary = lite.Binary (image)
 CUR.execute ('UPDATE questions SET image   = (?)  WHERE image   is null;', (binary,) )
-CUR.execute ('UPDATE answers   SET comment = null WHERE comment =  " ";')
+CUR.execute ('UPDATE questions SET comment = null WHERE comment =  " ";')
 CON.commit ()
 
 CON.close ()
