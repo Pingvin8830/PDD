@@ -2,7 +2,7 @@
 
 import sqlite3 as lite
 
-CON  = lite.connect ('W:/Общая/VAA/python/my_progs/PDD/PDD.db')
+CON  = lite.connect ('W:/Общая/VAA/python/my_progs/PDD/forklift.db')
 CUR  = CON.cursor ()
 
 class Question ():
@@ -153,8 +153,8 @@ def readImage (filename):
     if fin:
       fin.close ()
       
-for ticket in range (4):
-  tn = ticket + 37
+for ticket in range (28):
+  tn = ticket + 13
   print (tn)
   if tn < 10: tnn = '0%d' % tn
   else:       tnn = str (tn)
@@ -164,19 +164,20 @@ for ticket in range (4):
     if qn < 10: qnn = '0%d' % qn
     else:       qnn = str (qn)
     qo = Question (ticket = tn, number = qn)
-    new_text = input (qo.text + ': ')
+    new_text = input (str (qo.text) + ': ')
     #new_text = None
     try:
-      image  = readImage ('W:/Общая/VAA/PDD/images/Pdd_%s_%s.jpg' % (tnn, qnn))
+      print ('W:/Общая/VAA/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
+      image  = readImage ('W:/Общая/VAA/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
       binary = lite.Binary (image)
     except:
       binary = None
-    CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
     CON.commit ()
     if new_text:
       if new_text != ' ':
         qo.write ()
         qo.update ('text', new_text)
+        CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
       else:
         qo.delete ()
     qo = Question (ident = qo.id)
