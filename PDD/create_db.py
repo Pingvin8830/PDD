@@ -1,8 +1,10 @@
 #!/bin/python3
 
+from   sys     import platform as OS
 import sqlite3 as lite
 
-CON  = lite.connect ('W:/Общая/VAA/python/my_progs/PDD/forklift.db')
+if OS == 'linux': CON = lite.connect ('/data/git/PDD/PDD/forklift.db')
+else:             CON = lite.connect ('W:/Общая/VAA/python/my_progs/PDD/forklift.db')
 CUR  = CON.cursor ()
 
 class Question ():
@@ -24,10 +26,12 @@ class Question ():
         self.id     = CUR.execute ('SELECT max(id) FROM questions').fetchone () [0] + 1
         self.ticket = 0
         self.number = 0
-    try:    self.image  = CUR.execute ('SELECT image  FROM questions WHERE id = %d' % self.id).fetchone () [0]
-    except: self.image  = None
-    try:    self.text   = CUR.execute ('SELECT text   FROM questions WHERE id = %d' % self.id).fetchone () [0]
-    except: self.text   = None
+    try:    self.image   = CUR.execute ('SELECT image   FROM questions WHERE id = %d' % self.id).fetchone () [0]
+    except: self.image   = None
+    try:    self.text    = CUR.execute ('SELECT text    FROM questions WHERE id = %d' % self.id).fetchone () [0]
+    except: self.text    = None
+    try:    self.comment = CUR.execute ('SELECT comment FROM questions WHERE id = %d' % self.id).fetchone () [0]
+    except: self.comment = None
 
   def __str__ (self):
     if self.image: is_image = True
@@ -38,8 +42,9 @@ ticket:    %d
 number:    %d
 is_image:  %s
 text:      %s
+comment:   %s
 is_db:     %s
-''' % (self.id, self.ticket, self.number, is_image, self.text, str (self.is_db ()))
+''' % (self.id, self.ticket, self.number, is_image, self.text, self.comment, str (self.is_db ()))
 
   def is_db (self):
       if CUR.execute ('SELECT * FROM questions WHERE id = %d' % self.id).fetchone ():
@@ -153,8 +158,8 @@ def readImage (filename):
     if fin:
       fin.close ()
       
-for ticket in range (28):
-  tn = ticket + 13
+for ticket in range (1):
+  tn = ticket + 14
   print (tn)
   if tn < 10: tnn = '0%d' % tn
   else:       tnn = str (tn)
@@ -164,22 +169,23 @@ for ticket in range (28):
     if qn < 10: qnn = '0%d' % qn
     else:       qnn = str (qn)
     qo = Question (ticket = tn, number = qn)
-    new_text = input (str (qo.text) + ': ')
-    #new_text = None
+    new_text    = input ('text: '    + str (qo.text)    + ': ')
+    new_comment = input ('comment: ' + str (qo.comment) + ': ')
     try:
-      print ('W:/Общая/VAA/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
-      image  = readImage ('W:/Общая/VAA/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
+      if OS == 'linux': image = readImage ('/data/git/PDD/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
+      else:             image = readImage ( 'W:/Общая/VAA/PDD/forklift_images/%d-%d.jpg' % (tn, qn))
       binary = lite.Binary (image)
     except:
       binary = None
-    CON.commit ()
     if new_text:
       if new_text != ' ':
         qo.write ()
         qo.update ('text', new_text)
+        if new_comment: qo.update ('comment', new_comment)
         CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
       else:
         qo.delete ()
+    CON.commit ()
     qo = Question (ident = qo.id)
     print (qo)
     for answer in range (5):
@@ -187,7 +193,6 @@ for ticket in range (28):
       print (tn, qn, an)
       ao = Answer (ticket = tn, question = qn, number = an)
       new_text = input (str (ao.text) + ': ')
-      #new_text = None
       if new_text:
         if new_text != ' ':
           ao.write ()
@@ -197,7 +202,6 @@ for ticket in range (28):
       print ()
     try:    good = int (input ('Укажите номер ответа: '))
     except: good = None
-    #good = None
     for answer in range (5):
       an = answer + 1
       print (tn,qn,an)
@@ -208,10 +212,11 @@ for ticket in range (28):
       ao = Answer (ident = ao.id)
       print (ao)
 
-image  = readImage ('W:/Общая/VAA/PDD/images/text.gif')
+if OS == 'linux': image = readImage ('/data/git/PDD/PDD/images/text.gif')
+else:             image = readImage ( 'W:/Общая/VAA/PDD/images/text.gif')
 binary = lite.Binary (image)
-CUR.execute ('UPDATE questions SET image = (?)  WHERE image is null;', (binary,) )
-CUR.execute ('UPDATE answers   SET text  = null WHERE text  =  " ";')
+CUR.execute ('UPDATE questions SET image   = (?)  WHERE image   is null;', (binary,) )
+CUR.execute ('UPDATE answers   SET comment = null WHERE comment =  " ";')
 CON.commit ()
 
 CON.close ()
