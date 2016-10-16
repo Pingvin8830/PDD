@@ -3,7 +3,7 @@
 from   sys     import platform as OS
 import sqlite3 as lite
 
-if OS == 'linux': CON = lite.connect ('/data/git/PDD/PDD/forklift.db')
+if OS == 'linux': CON = lite.connect ('/data/git/PDD/PDD/expluatation.db')
 else:             CON = lite.connect ('W:/Общая/VAA/python/my_progs/PDD/forklift.db')
 CUR  = CON.cursor ()
 
@@ -158,6 +158,7 @@ def readImage (filename):
     if fin:
       fin.close ()
       
+'''
 for ticket in range (40):
   tn = ticket + 1
   print (tn)
@@ -223,5 +224,29 @@ binary = lite.Binary (image)
 CUR.execute ('UPDATE questions SET image   = (?)  WHERE image   is null;', (binary,) )
 CUR.execute ('UPDATE questions SET comment = null WHERE comment =  " ";')
 CON.commit ()
+'''
+
+tn = 0
+qn = 0
+an = 0
+
+task  = open ('/data/git/PDD/PDD/b-2011.txt', 'r')
+lines = task.readlines ()
+task.close ()
+
+for line in lines:
+  if   line [0] == 'T': tn = int (line [1:3])
+  elif line [0] == 'Q':
+    qn = int (line [1:2])
+    qo = Question (ticket = tn, number = qn)
+    qo.write ()
+    qo.update ('text', line [3:].replace ('\n', ''))
+    print (qo)
+  elif line [0] == 'A':
+    an = int (line [1:2])
+    ao = Answer (ticket = tn, question = qn, number = an)
+    ao.write ()
+    ao.update ('text', line [3:].replace ('\n', ''))
+    print (ao)
 
 CON.close ()
