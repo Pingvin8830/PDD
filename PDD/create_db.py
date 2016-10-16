@@ -241,6 +241,11 @@ for line in lines:
     qo = Question (ticket = tn, number = qn)
     qo.write ()
     qo.update ('text', line [3:].replace ('\n', ''))
+    try:    image  = readImage ('/data/git/PDD/PDD/expluatation_images/%d_%d.jpg' % (tn, qn))
+    except: image  = readImage ('/data/git/PDD/PDD/images/text.gif')
+    binary = lite.Binary (image)
+    CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
+    CON.commit ()
     print (qo)
   elif line [0] == 'A':
     an = int (line [1:2])
