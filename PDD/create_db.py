@@ -4,8 +4,8 @@ from   sys     import platform as OS
 import sqlite3 as lite
 
 if OS == 'linux': CON = lite.connect ('/data/git/PDD/PDD/expluatation.db')
-else:             CON = lite.connect ('W:/Общая/VAA/python/my_progs/PDD/forklift.db')
-CUR  = CON.cursor ()
+else:             CON = lite.connect ('W:/Общая/VAA/PDD/expluatation.db')
+CUR = CON.cursor ()
 
 class Question ():
   '''Вопросы'''
@@ -230,7 +230,8 @@ tn = 0
 qn = 0
 an = 0
 
-task  = open ('/data/git/PDD/PDD/b-2011.txt', 'r')
+if OS =='linux': task = open ('/data/git/PDD/PDD/b-2011.txt', 'r')
+else:            task = open ('W:/Общая/VAA/PDD/b-2011.txt',  'r', encoding = 'utf-8')
 lines = task.readlines ()
 task.close ()
 
@@ -241,17 +242,30 @@ for line in lines:
     qo = Question (ticket = tn, number = qn)
     qo.write ()
     qo.update ('text', line [3:].replace ('\n', ''))
-    try:    image  = readImage ('/data/git/PDD/PDD/expluatation_images/%d_%d.jpg' % (tn, qn))
-    except: image  = readImage ('/data/git/PDD/PDD/images/text.gif')
+    if OS == 'linux':
+      try:    image = readImage ('/data/git/PDD/PDD/expluatation_images/%d_%d.jpg' % (tn, qn))
+      except: image = readImage ('/data/git/PDD/PDD/images/text.gif')
+    else:
+      try:    image = readImage ('W:/Общая/VAA/PDD/expluatation_images/%d_%d.jpg' % (tn, qn))
+      except: image = readImage ('W:/Общая/VAA/PDD/images/text.gif')
     binary = lite.Binary (image)
     CUR.execute ('UPDATE questions SET image = (?) WHERE id = %d' % qo.id, (binary,) )
     CON.commit ()
+    print (qo)
+  elif line [0] == 'C':
+    comment = line [2:]
+    qo.update ('comment', comment)
     print (qo)
   elif line [0] == 'A':
     an = int (line [1:2])
     ao = Answer (ticket = tn, question = qn, number = an)
     ao.write ()
     ao.update ('text', line [3:].replace ('\n', ''))
+    print (ao)
+  elif line [0] == 'R':
+    an = line [1]
+    ao = Answer (ticket = tn, question = qn, number = an)
+    ao.update ('is_true', 1)
     print (ao)
 
 CON.close ()
