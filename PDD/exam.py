@@ -5,7 +5,7 @@ from sys import path as PATH
 PATH.append (getcwd () + '/moduls')
 
 from config import settings as CONF
-from gui    import *
+#from gui    import *
 
 from   tkinter      import *
 from   random       import randrange
@@ -35,11 +35,11 @@ WINDOW:   %s, %s
   CONF.get ('WINDOW', 'title'), '%dx%d+%d+%d' % (CONF.getint ('WINDOW', 'width'), CONF.getint ('WINDOW', 'height'), CONF.getint ('WINDOW', 'x_step'), CONF.getint ('WINDOW', 'y_step'))
   ), False
              )
-'''
+
 def gui_exit ():
   window.destroy ()
   write_log ('Destroy window')
-'''
+
 def write_image (data):
   file = open (CONF.get ('FILES', 'tmp'), 'wb')
   file.write (data)
@@ -214,21 +214,21 @@ is_db:    %s
     CON.commit ()
     write_log ('Delete answer with id %d' % self.id)
     self.__init__ (ticket = self.ticket, question = self.question, number = self.number)
-'''
+
 class MyRadio (Radiobutton):
-  \'''Радиокнопки\'''
+  '''Радиокнопки'''
   def __init__ (self, master, value, variable, text = None, rw = 0, rs = 1, cl = 0, cs = 1, st = N, command = None):
     super (MyRadio, self).__init__ (master, text = text, command = command, value = value, variable = variable, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')))
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
         
 class MyMessage (Message):
-  \'''Метки\'''
+  '''Метки'''
   def __init__ (self, master, text = None, image = None, rw = 0, rs = 1, cl = 0, cs = 1, st = N, width = None, height = None):
     super (MyMessage, self).__init__ (master, text = text, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')), width = width, height = height)
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
 
 class MyButton (Button):
-  \'''Кнопки\'''
+  '''Кнопки'''
   def __init__ (self, master, text, command = None, rw = 0, rs = 1, cl = 0, cs = 1, st = N):
     super (MyButton, self).__init__ (master, text = text, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')), command = command)
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
@@ -245,16 +245,16 @@ class MyEntry (Entry):
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
         
 class MainMenu (Frame):
-  \'''Главное меню\'''
+  '''Главное меню'''
   def __init__ (self, master):
-    \'''Инициализирует рамку GUI\'''
+    '''Инициализирует рамку GUI'''
     super (MainMenu, self).__init__ (master)
     self.create_widgets ()
     self.grid           ()
     write_log ('Create main menu')
 
   def create_widgets (self):
-    \'''Создание виджетов\'''
+    '''Создание виджетов'''
     self.ttl_1_lbl = MyLabel   (self,                 cs = 3, text = 'Тест на знания')
     self.ttl_2_lbl = MyLabel   (self, rw = 1,         cs = 3, text = 'Правил Дорожного Движения')
     self.delim_lbl = MyMessage (self, rw = 2,         cs = 3)
@@ -263,19 +263,19 @@ class MainMenu (Frame):
     self.exit_bttn = MyButton  (self, rw = 3, cl = 2,         text = '   Выход   ', command = gui_exit)
 
   def test (self):
-    \'''Тест\'''
+    '''Тест'''
     write_log ('Switch start test')
     self.destroy ()
     self = Test (self.master)
 
   def settings (self):
-    ''\'Настройки\'''
+    '''Настройки'''
     write_log ('Switch settings')
     self.destroy ()
     self = Settings (self.master)
 
 class Settings (Frame):
-  ''\'Настройки\'''
+  '''Настройки'''
   def __init__ (self, master):
     super (Settings, self).__init__ (master)
     self.create_widgets ()
@@ -283,7 +283,7 @@ class Settings (Frame):
     write_log ('Create settings menu')
 
   def create_widgets (self):
-    '\''Создание виджетов\'''
+    '''Создание виджетов'''
     self.title_lbl     = MyLabel  (self,          cs = 3,         text = 'Настройки программы')
     self.font_sect_lbl = MyLabel  (self, rw =  1,         st = W, text = 'Шрифт')
     self.font_name_lbl = MyLabel  (self, rw =  2, cl = 1, st = W, text = 'Название')
@@ -340,7 +340,7 @@ class Settings (Frame):
     self.exit_bttn     = MyButton (self, rw = 31, cl = 2, st = W, text = '    Выход   ', command = gui_exit)
         
   def save (self):
-    ''\'Сохранение настроек'\''
+    '''Сохранение настроек'''
     write_log ('Switch save')
     CONF.set ('FONT',     'name',      self.font_name_ent.get ())
     CONF.set ('FONT',     'size',      self.font_size_ent.get ())
@@ -368,7 +368,7 @@ class Settings (Frame):
     self = MainMenu (self.master)
             
 class Test (Frame):
-  ''\'Тестирование\'''
+  '''Тестирование'''
   def __init__ (self, master):
     super (Test, self).__init__ (master)
     self.questions = [0]
@@ -385,7 +385,7 @@ class Test (Frame):
     self.grid           ()
 
   def create_widgets (self):
-    '\''Создание виджетов'\''
+    '''Создание виджетов'''
     self.answer = StringVar ()
     self.answer.set (None)
     self.title_lbl = MyLabel   (self, rw =  0, cs = 2)
@@ -408,7 +408,7 @@ class Test (Frame):
     self.exit_bttn = MyButton  (self, rw = 12, cs = 2, st = S, text = '    Выход   ', command = gui_exit)
 
   def get_question (self):
-    ''\'Задаёт вопрос\'''
+    '''Задаёт вопрос'''
     self.ans_1_rad.grid_remove ()
     self.ans_1_lbl.grid_remove ()
     self.ans_2_rad.grid_remove ()
@@ -451,7 +451,7 @@ class Test (Frame):
     self.answer.set (None)
         
   def save_answer (self):
-    '\''Сохранение ответа\'''
+    '''Сохранение ответа'''
     write_log ('Switch done')
     if self.answer.get () == 'None': return
     self.answers [0] += 1
@@ -470,13 +470,13 @@ class Test (Frame):
       self = Result (self.master, self.answers, self.errors)
         
   def main_menu (self):
-    ''\'Выход в главное меню\'''
+    '''Выход в главное меню'''
     write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
 
 class Result (Frame):
-  \'''Результаты'\''
+  '''Результаты'''
   def __init__ (self, master, answers, errors):
     super (Result, self).__init__ (master)
     self.answers = answers
@@ -486,7 +486,7 @@ class Result (Frame):
     write_log ('Create result menu')
 
   def result (self):
-    '\''Подводит итоги''\'
+    '''Подводит итоги'''
     write_log ('Count errors: %d' % self.errors [0])
     write_log ('Max errors: %d' % CONF.getint ('LOGIC', 'max_error'))
     if self.errors [0] <= CONF.getint ('LOGIC', 'max_error'):
@@ -497,7 +497,7 @@ class Result (Frame):
       return 'Переэкзаменовка'
 
   def create_widgets (self):
-    ''\'Создание виджетов\'''
+    '''Создание виджетов'''
     self.title_lbl = MyLabel  (self,         cs = 2, text = 'Результаты')
     self.resul_lbl = MyLabel  (self, rw = 1, cs = 2, text = self.result ())
     self.delim_lbl = MyLabel  (self, rw = 2, cs = 2)
@@ -506,19 +506,19 @@ class Result (Frame):
     self.exit_bttn = MyButton (self, rw = 4, cl = 1, text = '    Выход   ',     command = gui_exit)
 
   def more (self):
-    ''\'Вывод подробностей'\''
+    '''Вывод подробностей'''
     write_log ('Switch more information')
     self.destroy ()
     self = More (self.master, self.answers, self.errors)
 
   def main_menu (self):
-    ''\'Выход в главное меню\'''
+    '''Выход в главное меню'''
     write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
 
 class More (Frame):
-  ''\'Подробные результаты\'''
+  '''Подробные результаты'''
   def __init__ (self, master, answers, errors):
     super (More, self).__init__ (master)
     self.answers = answers
@@ -528,7 +528,7 @@ class More (Frame):
     write_log ('Create more information menu')
 
   def create_widgets (self):
-    '\''Создание виджетов''\'
+    '''Создание виджетов'''
     mes = '      Ошибки при прохождении теста      \n\n'
     mes += 'Количество ошибок:                 %d  \n\n' % self.errors [0]
     mes += '+-----+------+---------+------------+ \n'
@@ -550,11 +550,10 @@ class More (Frame):
     self.exit_bttn = MyButton  (self, rw = 1, cl = 1, text = '    Выход   ', command = gui_exit)
 
   def main_menu (self):
-    ''\'Выход в главное меню'\''
+    '''Выход в главное меню'''
     write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
-'''
 
 main ()
 write_log ('Stop programm')
