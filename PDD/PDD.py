@@ -5,17 +5,16 @@ from   random       import randrange
 from   PIL          import Image, ImageTk
 from   configparser import RawConfigParser
 from   datetime     import datetime
+from   sys          import platform as OS
 import sqlite3      as     lite
 
 conf = RawConfigParser ()
-try:
-  conf.read ('W:/Общая/VAA/python/my_progs/PDD/PDD_win.conf')
-  CONF = 'W:/Общая/VAA/python/my_progs/PDD/PDD_win.conf'
-  test = conf.get ('FONT', 'name')
-except:
+if OS == 'linux':
   conf.read ('/data/git/PDD/PDD/PDD.conf')
   CONF = '/data/git/PDD/PDD/PDD.conf'
-  test = conf.get ('FONT', 'name')
+else:
+  conf.read ('W:/Общая/VAA/PDD/PDD_win.conf')
+  CONF = 'W:/Общая/VAA/PDD/PDD_win.conf'
 
 def set_var ():
   global FONT
