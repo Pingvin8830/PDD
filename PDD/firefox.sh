@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /data/git/PDD/PDD
-./PDD.py
+./exam.py
 
-RES=`grep ^Result forklift.log | tail -1 | cut -f 2 -d ' '`
+RES=`grep ^Result logs/forklift.log | tail -1 | cut -f 2 -d ' '`
 [ "${RES}" = 'OK' ] && firefox
