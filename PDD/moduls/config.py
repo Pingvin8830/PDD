@@ -47,6 +47,8 @@ class MyConf (RawConfigParser):
     if not self.has_option ('ANSWER',   'count'):     self.set ('ANSWER',   'count',     5)
     if not self.has_option ('ANSWER',   'start'):     self.set ('ANSWER',   'start',     1)
     if not self.has_option ('LOGIC',    'max_error'): self.set ('LOGIC',    'max_error', 2)
+    if not self.has_option ('LOGIC',    'type_test'): self.set ('LOGIC',    'type_test', 'random')
+    if not self.has_option ('LOGIC',    'ticket'):    self.set ('LOGIC',    'ticket',    5)
     
   def set (self, section, option, value):
     super (MyConf, self).set (section, option, value)
