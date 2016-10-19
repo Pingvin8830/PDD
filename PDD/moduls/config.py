@@ -3,7 +3,6 @@
 from configparser import RawConfigParser
 from os           import getcwd
 from sys          import argv
-from sys          import path     as PATH
 from sys          import platform as OS
 
 FILE = None
