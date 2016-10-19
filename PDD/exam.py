@@ -4,13 +4,15 @@ from os  import getcwd
 from sys import path as PATH
 PATH.append (getcwd () + '/moduls')
 
-from config import settings as CONF
-#from gui    import *
+from config    import settings as CONF
+from functions import *
+#from gui       import window, MainMenu
+
 
 from   tkinter      import *
 from   random       import randrange
 from   PIL          import Image, ImageTk
-from   datetime     import datetime
+
 from   sys          import platform as OS
 import sqlite3      as     lite
 
@@ -36,27 +38,12 @@ WINDOW:   %s, %s
   ), False
              )
 
+
 def gui_exit ():
   window.destroy ()
   write_log ('Destroy window')
 
-def write_image (data):
-  file = open (CONF.get ('FILES', 'tmp'), 'wb')
-  file.write (data)
-  file.close ()
-  write_log ('Image write')
 
-def write_log (string, date = True):
-  while len (string) < 60:
-    string += ' '
-  file = open (CONF.get ('FILES', 'log'), 'a', encoding = 'utf-8')
-  file.write (string)
-  if date:
-    file.write (' %s\n' % datetime.today ())
-  else:
-    file.write ('\n')
-  file.close ()
-  
 def main (type_gui = 'main'):
   global window
   set_var ()
@@ -215,17 +202,20 @@ is_db:    %s
     write_log ('Delete answer with id %d' % self.id)
     self.__init__ (ticket = self.ticket, question = self.question, number = self.number)
 
+
 class MyRadio (Radiobutton):
   '''Радиокнопки'''
   def __init__ (self, master, value, variable, text = None, rw = 0, rs = 1, cl = 0, cs = 1, st = N, command = None):
     super (MyRadio, self).__init__ (master, text = text, command = command, value = value, variable = variable, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')))
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
-        
+
+
 class MyMessage (Message):
   '''Метки'''
   def __init__ (self, master, text = None, image = None, rw = 0, rs = 1, cl = 0, cs = 1, st = N, width = None, height = None):
     super (MyMessage, self).__init__ (master, text = text, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')), width = width, height = height)
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
+
 
 class MyButton (Button):
   '''Кнопки'''
@@ -233,17 +223,20 @@ class MyButton (Button):
     super (MyButton, self).__init__ (master, text = text, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')), command = command)
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
 
+
 class MyLabel (Label):
   def __init__ (self, master, text = None, rw = 0, rs = 1, cl = 0, cs = 1, st = N):
     super (MyLabel, self).__init__ (master, text = text, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')))
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
+
 
 class MyEntry (Entry):
   def __init__ (self, master, text = '', rw = 0, rs = 1, cl = 0, cs = 1, st = N, width = 40):
     super (MyEntry, self).__init__ (master, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')), width = width)
     self.insert (0, text)
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
-        
+
+     
 class MainMenu (Frame):
   '''Главное меню'''
   def __init__ (self, master):
@@ -273,6 +266,7 @@ class MainMenu (Frame):
     write_log ('Switch settings')
     self.destroy ()
     self = Settings (self.master)
+
 
 class Settings (Frame):
   '''Настройки'''
@@ -366,7 +360,8 @@ class Settings (Frame):
     write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
-            
+
+
 class Test (Frame):
   '''Тестирование'''
   def __init__ (self, master):
@@ -377,6 +372,9 @@ class Test (Frame):
       qo = Question (ticket = randrange (CONF.getint ('TICKET', 'count')) + CONF.getint ('TICKET', 'start'), number = qn)
       self.questions.append (qo)
       write_log ('Add  question with id %d in test' % qo.id)
+    '''
+    self.questions.append (Question (ident = 67))
+    '''
     self.answers  = [0]
     self.errors   = [0]
     self.create_widgets ()
@@ -475,6 +473,7 @@ class Test (Frame):
     self.destroy ()
     self = MainMenu (self.master)
 
+
 class Result (Frame):
   '''Результаты'''
   def __init__ (self, master, answers, errors):
@@ -517,6 +516,7 @@ class Result (Frame):
     self.destroy ()
     self = MainMenu (self.master)
 
+
 class More (Frame):
   '''Подробные результаты'''
   def __init__ (self, master, answers, errors):
@@ -554,6 +554,7 @@ class More (Frame):
     write_log ('Switch main menu')
     self.destroy ()
     self = MainMenu (self.master)
+
 
 main ()
 write_log ('Stop programm')
