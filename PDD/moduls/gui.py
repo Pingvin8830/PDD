@@ -71,36 +71,36 @@ class QuestionForm (Frame):
     self.answer = StringVar ()
     self.answer.set (None)
     self.title_lbl = MyLabel   (self, rw =  0, cs = 2)
-    self.image_lbl = MyMessage (self, rw =  1, cs = 2,         image = None)
-    self.quest_lbl = MyMessage (self, rw =  2, cs = 2,         width = 800)
-    self.dlm_1_lbl = MyMessage (self, rw =  3, cs = 2)
+    self.image_lbl = MyLabel (self, rw = 1, cs = 2, image = None)
+    self.quest_msg = MyMessage (self, rw = 2, cs = 2, width = 800)
+    self.dlm_1_lbl = MyLabel (self, rw = 3, cs = 2)
     self.ans_1_rad = MyRadio   (self, rw =  4,         st = 'W', variable = self.answer, value = '1')
-    self.ans_1_lbl = MyMessage (self, rw =  4, cl = 1, st = 'W', width = 800)
+    self.ans_1_msg = MyMessage (self, rw = 4, cl = 1, st = 'W', width = 800)
     self.ans_2_rad = MyRadio   (self, rw =  5,         st = 'W', variable = self.answer, value = '2')
-    self.ans_2_lbl = MyMessage (self, rw =  5, cl = 1, st = 'W', width = 800)
+    self.ans_2_msg = MyMessage (self, rw = 5, cl = 1, st = 'W', width = 800)
     self.ans_3_rad = MyRadio   (self, rw =  6,         st = 'W', variable = self.answer, value = '3')
-    self.ans_3_lbl = MyMessage (self, rw =  6, cl = 1, st = 'W', width = 800)
+    self.ans_3_msg = MyMessage (self, rw = 6, cl = 1, st = 'W', width = 800)
     self.ans_4_rad = MyRadio   (self, rw =  7,         st = 'W', variable = self.answer, value = '4')
-    self.ans_4_lbl = MyMessage (self, rw =  7, cl = 1, st = 'W', width = 800)
+    self.ans_4_msg = MyMessage (self, rw = 7, cl = 1, st = 'W', width = 800)
     self.ans_5_rad = MyRadio   (self, rw =  8,         st = 'W', variable = self.answer, value = '5')
-    self.ans_5_lbl = MyMessage (self, rw =  8, cl = 1, st = 'W', width = 800)
-    self.dlm_2_lbl = MyMessage (self, rw =  9, cs = 2)
-    self.dlm_3_lbl = MyMessage (self, rw = 12, cs = 2)
+    self.ans_5_msg = MyMessage (self, rw = 8, cl = 1, st = 'W', width = 800)
+    self.dlm_2_lbl = MyLabel (self, rw = 9, cs = 2)
+    self.dlm_3_lbl = MyLabel (self, rw = 12, cs = 2)
     self.next_bttn = MyButton  (self, rw = 13, cs = 2,           text = '    Далее   ')
     self.staff_frm = MyStaff   (self, rw = 14, cs = 2)
 
   def get_question (self):
     '''Задаёт вопрос'''
     self.ans_1_rad.grid_remove ()
-    self.ans_1_lbl.grid_remove ()
+    self.ans_1_msg.grid_remove ()
     self.ans_2_rad.grid_remove ()
-    self.ans_2_lbl.grid_remove ()
+    self.ans_2_msg.grid_remove ()
     self.ans_3_rad.grid_remove ()
-    self.ans_3_lbl.grid_remove ()
+    self.ans_3_msg.grid_remove ()
     self.ans_4_rad.grid_remove ()
-    self.ans_4_lbl.grid_remove ()
+    self.ans_4_msg.grid_remove ()
     self.ans_5_rad.grid_remove ()
-    self.ans_5_lbl.grid_remove ()
+    self.ans_5_msg.grid_remove ()
     question = self.questions [len (self.answers)]
     write_log ('Get  question with id %d' % question.id)
     self.good_answer = 0
@@ -112,13 +112,13 @@ class QuestionForm (Frame):
         self.good_answer = an
         write_log ('It is true answer')
       if ao.text:
-        if   an == 1: self.ans_1_lbl ['text'] = ao.text; self.ans_1_rad.grid (row = 4, sticky = 'W'); self.ans_1_lbl.grid (row = 4, column = 1, sticky = 'W')
-        elif an == 2: self.ans_2_lbl ['text'] = ao.text; self.ans_2_rad.grid (row = 5, sticky = 'W'); self.ans_2_lbl.grid (row = 5, column = 1, sticky = 'W')
-        elif an == 3: self.ans_3_lbl ['text'] = ao.text; self.ans_3_rad.grid (row = 6, sticky = 'W'); self.ans_3_lbl.grid (row = 6, column = 1, sticky = 'W')
-        elif an == 4: self.ans_4_lbl ['text'] = ao.text; self.ans_4_rad.grid (row = 7, sticky = 'W'); self.ans_4_lbl.grid (row = 7, column = 1, sticky = 'W')
-        elif an == 5: self.ans_5_lbl ['text'] = ao.text; self.ans_5_rad.grid (row = 8, sticky = 'W'); self.ans_5_lbl.grid (row = 8, column = 1, sticky = 'W')
+        if an ==1: self.ans_1_msg ['text'] = ao.text; self.ans_1_rad.grid (row = 4, sticky = 'W'); self.ans_1_msg.grid (row = 4, column = 1, sticky = 'W')
+        elif an == 2: self.ans_2_msg ['text'] = ao.text; self.ans_2_rad.grid (row = 5, sticky = 'W'); self.ans_2_msg.grid (row = 5, column = 1, sticky = 'W')
+        elif an == 3: self.ans_3_msg ['text'] = ao.text; self.ans_3_rad.grid (row = 6, sticky = 'W'); self.ans_3_msg.grid (row = 6, column = 1, sticky = 'W')
+        elif an == 4: self.ans_4_msg ['text'] = ao.text; self.ans_4_rad.grid (row = 7, sticky = 'W'); self.ans_4_msg.grid (row = 7, column = 1, sticky = 'W')
+        elif an == 5: self.ans_5_msg ['text'] = ao.text; self.ans_5_rad.grid (row = 8, sticky = 'W'); self.ans_5_msg.grid (row = 8, column = 1, sticky = 'W')
     self.title_lbl ['text'] = 'Билет № %d' % question.ticket
-    self.quest_lbl ['text'] = '%d. %s'     % (question.number, question.text.replace ('\\', '\n'))
+    self.quest_msg ['text'] = '%d. %s' % (question.number, question.text.replace ('\\', '\n'))
     self.image_lbl.destroy ()
     try:
       write_image (question.image)
@@ -264,10 +264,13 @@ class Test (QuestionForm):
     self.questions = [0]
     self.answers   = [0]
     self.errors    = [0]
+    tn = None
     for question in range (CONF.getint ('QUESTION', 'count')):
       qn = question + CONF.getint ('QUESTION', 'start')
-      if   CONF.get ('LOGIC', 'type_test') == 'random': tn = randrange (CONF.getint ('TICKET', 'count')) + CONF.getint ('TICKET', 'start')
-      elif CONF.get ('LOGIC', 'type_test') == 'ticket': tn = CONF.getint ('LOGIC', 'ticket')
+      if   CONF.get ('LOGIC', 'type_test') == 'random':        tn = randrange (CONF.getint ('TICKET', 'count')) + CONF.getint ('TICKET', 'start')
+      elif CONF.get ('LOGIC', 'type_test') == 'ticket':        tn = CONF.getint ('LOGIC', 'ticket')
+      elif CONF.get ('LOGIC', 'type_test') == 'random ticket':
+        if not tn: tn = randrange (CONF.getint ('TICKET', 'count')) + CONF.getint ('TICKET', 'start')
       qo = Question (ticket = tn, number = qn)
       self.questions.append (qo)
       write_log ('Add  question with id %d in test' % qo.id)
@@ -359,12 +362,12 @@ class More (QuestionForm):
     self.ans_3_rad.destroy ()
     self.ans_4_rad.destroy ()
     self.ans_5_rad.destroy ()
-    self.ans_1_lbl.destroy ()
-    self.ans_2_lbl.destroy ()
-    self.ans_3_lbl.destroy ()
-    self.ans_4_lbl.destroy ()
-    self.ans_5_lbl.destroy ()
-    self.quest_lbl.destroy ()
+    self.ans_1_msg.destroy ()
+    self.ans_2_msg.destroy ()
+    self.ans_3_msg.destroy ()
+    self.ans_4_msg.destroy ()
+    self.ans_5_msg.destroy ()
+    self.quest_msg.destroy ()
     self.image_lbl.destroy ()
     self.title_lbl ['text'] = 'Ошибок нет.'
 
@@ -376,15 +379,15 @@ class More (QuestionForm):
 
   def get_question (self):
     self.ans_1_rad.grid_remove ()
-    self.ans_1_lbl.grid_remove ()
+    self.ans_1_msg.grid_remove ()
     self.ans_2_rad.grid_remove ()
-    self.ans_2_lbl.grid_remove ()
+    self.ans_2_msg.grid_remove ()
     self.ans_3_rad.grid_remove ()
-    self.ans_3_lbl.grid_remove ()
+    self.ans_3_msg.grid_remove ()
     self.ans_4_rad.grid_remove ()
-    self.ans_4_lbl.grid_remove ()
+    self.ans_4_msg.grid_remove ()
     self.ans_5_rad.grid_remove ()
-    self.ans_5_lbl.grid_remove ()
+    self.ans_5_msg.grid_remove ()
     question = self.errors [self.number]
     write_log ('Get  question with id %d' % question.id)
     good_answer = 0
@@ -396,13 +399,13 @@ class More (QuestionForm):
         good_answer = an
         write_log ('It is true answer')
       if ao.text:
-        if   an == 1: self.ans_1_lbl ['text'] = ao.text; self.ans_1_lbl.grid (row = 4, column = 1, sticky = 'W')
-        elif an == 2: self.ans_2_lbl ['text'] = ao.text; self.ans_2_lbl.grid (row = 5, column = 1, sticky = 'W')
-        elif an == 3: self.ans_3_lbl ['text'] = ao.text; self.ans_3_lbl.grid (row = 6, column = 1, sticky = 'W')
-        elif an == 4: self.ans_4_lbl ['text'] = ao.text; self.ans_4_lbl.grid (row = 7, column = 1, sticky = 'W')
-        elif an == 5: self.ans_5_lbl ['text'] = ao.text; self.ans_5_lbl.grid (row = 8, column = 1, sticky = 'W')
+        if an == 1: self.ans_1_msg ['text'] = ao.text; self.ans_1_msg.grid (row = 4, column = 1, sticky = 'W')
+        elif an == 2: self.ans_2_msg ['text'] = ao.text; self.ans_2_msg.grid (row = 5, column = 1, sticky = 'W')
+        elif an == 3: self.ans_3_msg ['text'] = ao.text; self.ans_3_msg.grid (row = 6, column = 1, sticky = 'W')
+        elif an == 4: self.ans_4_msg ['text'] = ao.text; self.ans_4_msg.grid (row = 7, column = 1, sticky = 'W')
+        elif an == 5: self.ans_5_msg ['text'] = ao.text; self.ans_5_msg.grid (row = 8, column = 1, sticky = 'W')
     self.title_lbl ['text'] = 'Билет № %d' % question.ticket
-    self.quest_lbl ['text'] = '%d. %s'     % (question.number, question.text.replace ('\\', '\n'))
+    self.quest_msg ['text'] = '%d. %s' % (question.number, question.text.replace ('\\', '\n'))
     self.image_lbl.destroy ()
     try:
       write_image (question.image)
