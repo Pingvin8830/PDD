@@ -272,50 +272,6 @@ class Test (QuestionForm):
       self.questions.append (qo)
       write_log ('Add  question with id %d in test' % qo.id)
 
-  '''
-  def get_question (self):
-    '\''Задаёт вопрос'\''
-    self.ans_1_rad.grid_remove ()
-    self.ans_1_lbl.grid_remove ()
-    self.ans_2_rad.grid_remove ()
-    self.ans_2_lbl.grid_remove ()
-    self.ans_3_rad.grid_remove ()
-    self.ans_3_lbl.grid_remove ()
-    self.ans_4_rad.grid_remove ()
-    self.ans_4_lbl.grid_remove ()
-    self.ans_5_rad.grid_remove ()
-    self.ans_5_lbl.grid_remove ()
-    question = self.questions [len (self.answers)]
-    write_log ('Get  question with id %d' % question.id)
-    self.good_answer = 0
-    for answer in range (CONF.getint ('ANSWER', 'count')):
-      an = answer + CONF.getint ('ANSWER', 'start')
-      ao = Answer (ticket = question.ticket, question = question.number, number = an)
-      write_log ('Add  answer   with id %d to question with id %d' % (ao.id, question.id))
-      if ao.is_true:
-        self.good_answer = an
-        write_log ('It is true answer')
-      if ao.text:
-        if   an == 1: self.ans_1_lbl ['text'] = ao.text; self.ans_1_rad.grid (row = 4, sticky = 'W'); self.ans_1_lbl.grid (row = 4, column = 1, sticky = 'W')
-        elif an == 2: self.ans_2_lbl ['text'] = ao.text; self.ans_2_rad.grid (row = 5, sticky = 'W'); self.ans_2_lbl.grid (row = 5, column = 1, sticky = 'W')
-        elif an == 3: self.ans_3_lbl ['text'] = ao.text; self.ans_3_rad.grid (row = 6, sticky = 'W'); self.ans_3_lbl.grid (row = 6, column = 1, sticky = 'W')
-        elif an == 4: self.ans_4_lbl ['text'] = ao.text; self.ans_4_rad.grid (row = 7, sticky = 'W'); self.ans_4_lbl.grid (row = 7, column = 1, sticky = 'W')
-        elif an == 5: self.ans_5_lbl ['text'] = ao.text; self.ans_5_rad.grid (row = 8, sticky = 'W'); self.ans_5_lbl.grid (row = 8, column = 1, sticky = 'W')
-    self.title_lbl ['text'] = 'Билет № %d' % question.ticket
-    self.quest_lbl ['text'] = '%d. %s'     % (question.number, question.text.replace ('\\', '\n'))
-    self.image_lbl.destroy ()
-    try:
-      write_image (question.image)
-      self.image = Image.open (CONF.get ('FILES', 'tmp'))
-      img = ImageTk.PhotoImage (self.image)
-      self.image.close ()
-      self.image = img
-    except:
-      self.image = None
-    self.image_lbl = Label (self, image = self.image)
-    self.image_lbl.grid (row = 1, columnspan = 2)
-    self.answer.set (None)
-  '''
   def save_answer (self):
     '''Сохранение ответа'''
     write_log ('Switch done')
@@ -393,9 +349,24 @@ class More (QuestionForm):
       self.number = 1
       self.get_question ()
     else:
-      print ('Do not errors.')      
+      self.no_errors ()
     self.grid ()
     write_log ('Create more information menu')
+
+  def no_errors (self):
+    self.ans_1_rad.destroy ()
+    self.ans_2_rad.destroy ()
+    self.ans_3_rad.destroy ()
+    self.ans_4_rad.destroy ()
+    self.ans_5_rad.destroy ()
+    self.ans_1_lbl.destroy ()
+    self.ans_2_lbl.destroy ()
+    self.ans_3_lbl.destroy ()
+    self.ans_4_lbl.destroy ()
+    self.ans_5_lbl.destroy ()
+    self.quest_lbl.destroy ()
+    self.image_lbl.destroy ()
+    self.title_lbl ['text'] = 'Ошибок нет.'
 
   def create_widgets (self):
     super (More, self).create_widgets ()
@@ -456,37 +427,5 @@ class More (QuestionForm):
       self.destroy ()
       self = Result (self.master, self.answers, self.errors)
         
-    
-  '''
-  def create_widgets (self):
-    '\''Создание виджетов'\''
-    mes = '      Ошибки при прохождении теста      \n\n'
-    mes += 'Количество ошибок:                 %d  \n\n' % self.errors [0]
-    mes += '+-----+------+---------+------------+ \n'
-    mes += '|Билет|Вопрос|Ваш ответ|Верный ответ| \n'
-    mes += '+-----+------+---------+------------+ \n'
-    for question in self.errors [1:]:
-      ticket = str (question.ticket)
-      number = str (question.number)
-      if question.ticket < 10: ticket = ' ' + ticket
-      if question.number < 10: number = ' ' + number
-      for answer in range (CONF.getint ('ANSWER', 'count')):
-        good_answer = answer + 1
-        ao = Answer (ticket = question.ticket, question = question.number, number = good_answer)
-        if ao.is_true: break
-      mes += '|   %s|    %s|        %d|           %d| \n' % (ticket, number, self.answers [question.number], good_answer)
-    mes += '+-----+------+---------+------------+ \n\n'
-    self.table_mes = MyMessage (self,         cs = 2, text = mes)
-    self.main_bttn = MyButton  (self, rw = 1,         text = 'Главное меню', command = self.main_menu)
-    self.exit_bttn = MyButton  (self, rw = 1, cl = 1, text = '    Выход   ', command = gui_exit)
-  '''
-  '''
-  def main_menu (self):
-    '\''Выход в главное меню'\''
-    write_log ('Switch main menu')
-    self.destroy ()
-    self = MainMenu (self.master)
-  '''
-
 if __name__ == '__main__':
   print ('Это всего-лишь модуль для работы с ГУИ.')
