@@ -8,6 +8,7 @@ from functions import write_image
 from functions import write_log
 from PIL       import Image
 from PIL       import ImageTk
+from sys       import argv
 from tkinter   import Frame
 from tkinter   import Label
 from tkinter   import StringVar
@@ -17,6 +18,7 @@ from widgets   import MyEntry
 from widgets   import MyLabel
 from widgets   import MyMessage
 from widgets   import MyRadio
+from widgets   import MyText
 
 def gui_exit ():
   window.destroy ()
@@ -52,7 +54,7 @@ class MyStaff (Frame):
   def __init__ (self, master, rw = 0, rs = 1, cl = 0, cs = 1, st = 'N'):
     super (MyStaff, self).__init__ (master)
     self.main_bttn = MyButton (self,         text = 'Главное меню', command = self.main_menu)
-    self.help_bttn = MyButton (self, rw = 1, text = '   Помощь   ')
+    self.help_bttn = MyButton (self, rw = 1, text = '   Помощь   ', command = self.help)
     self.exit_bttn = MyButton (self, rw = 2, text = '    Выход   ', command = gui_exit)
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
 
@@ -60,6 +62,11 @@ class MyStaff (Frame):
     write_log ('Switch main menu')
     self.master.destroy ()
     self.master = MainMenu (self.master.master)
+
+  def help (self):
+    write_log ('Switch help')
+    self.master.destroy ()
+    self.master = Help (self.master.master)
 
 class QuestionForm (Frame):
   def __init__ (self, master):
@@ -430,5 +437,46 @@ class More (QuestionForm):
       self.destroy ()
       self = Result (self.master, self.answers, self.errors)
         
+class Help (Frame):
+  def __init__ (self, master):
+    super (Help, self).__init__ (master)
+    self.create_widgets ()
+    self.grid ()
+
+  def create_widgets (self):
+    text  = 'Запуск:'
+    text += '\n%s -c <CONF_FILE>\n' % argv [0]
+    text += '\nCONF_FILE - файл конфигурации. Содержимое типа:\n'
+    text += '\n[SECTION]'
+    text += '\noption = <value>\n'
+    text += '\nОписание настроек:'
+    text += '\n[секция]   Параметр  Описание параметра                                        '
+    text += '\n[FONT]     name      Название доступного шрифта                                '
+    text += '\n[FONT]     size      Число - размер шрифта                                     '
+    text += '\n[FILES]    db        Путь к файлу базы данных sqlite3 с тестом                 '
+    text += '\n[FILES]    tmp       Путь к файлу для  сохранения изображений из БД            '
+    text += '\n[FILES]    log       Путь к файлу для логирования работы Программы             '
+    text += '\n[WINDOW]   title     Текст, отображаемый в заголовке окна                      '
+    text += '\n[WINDOW]   width     Число - ширина окна в пискселях                           '
+    text += '\n[WINDOW]   height    Число - высота окна в пикселях                            '
+    text += '\n[WINDOW]   x_step    Число - отступ от левого края монитора в пикселях         '
+    text += '\n[WINDOW]   y_step    Число - отступ от верхнего края монитора в пикселях       '
+    text += '\n[TICKET]   count     Число - количество билетов для выборки                    '
+    text += '\n[TICKET]   start     Число - смещение начала выборки билетов                   '
+    text += '\n[QUESTION] count     Число - количество вопросов в одном билете                '
+    text += '\n[QUESTION] start     Число - смещение начала выборки вопросов                  '
+    text += '\n[ANSWER]   count     Число - максимальное количество ответов на один вопрос    '
+    text += '\n[ANSWER]   start     Число - смещение начала выборки ответов                   '
+    text += '\n[LOGIC]    max_error Число - количество ошибок, допустимое для сдачи теста     '
+    text += '\n[LOGIC]    type_test random ticket - все вопросы из случайного билета          '
+    text += '\n                     ticket        - все вопросы из конкретного билета         '
+    text += '\n                     random        - вопросы выбираются по порядку из случайных'
+    text += '\n                                     билетов                                   '
+    text += '\n[LOGIC]    ticket    Число - номер билета при type_test = ticket\n             '
+    self.title_lbl = MyLabel (self,         text = 'Программа проведения тестов')
+    self.dlm_1_lbl = MyLabel (self, rw = 1)
+    self.help__txt = MyText  (self, rw = 2, text = text)
+    self.staff_frm = MyStaff (self, rw = 3)
+
 if __name__ == '__main__':
   print ('Это всего-лишь модуль для работы с ГУИ.')

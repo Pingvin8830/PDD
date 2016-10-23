@@ -3,10 +3,30 @@
 from config  import settings as CONF
 from tkinter import Button
 from tkinter import Entry
+from tkinter import END
 from tkinter import Frame
 from tkinter import Label
 from tkinter import Message
 from tkinter import Radiobutton
+from tkinter import Scrollbar
+from tkinter import Text
+
+class MyText (Text):
+  def __init__ (self, master, rw = 0, rs = 1, cl = 0, cs = 1, st = 'N', text = None, wrap = 'word', width = 80, height = 30):
+    '''Поле для ввода текста'''
+    super (MyText, self).__init__ (master, wrap = wrap, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')), width = width, height = height)
+    if text: self.insert (0.0, text)
+    self ['state'] = 'disabled'
+    self.scr = Scrollbar (master, command = self.yview)
+    self.configure (yscrollcommand = self.scr.set)
+    self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
+    self.scr.grid (row = rw, rowspan = 1, column = cl + 1, columnspan = 1, sticky = 'E')
+
+  def update_text (self, text):
+    self ['state'] = 'normal'
+    self.delete (0.0, END)
+    self.insert (0.0, text)
+    self ['state'] = 'disabled'
 
 class MyRadio (Radiobutton):
   '''Радиокнопки'''
@@ -27,7 +47,7 @@ class MyButton (Button):
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
 
 class MyLabel (Label):
-  def __init__ (self, master, text = None, rw = 0, rs = 1, cl = 0, cs = 1, st = 'N'):
+  def __init__ (self, master, text = None, image = None, rw = 0, rs = 1, cl = 0, cs = 1, st = 'N'):
     super (MyLabel, self).__init__ (master, text = text, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')))
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
 
