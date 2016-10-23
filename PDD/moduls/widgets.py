@@ -27,7 +27,7 @@ class MyButton (Button):
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
 
 class MyLabel (Label):
-  def __init__ (self, master, text = None, rw = 0, rs = 1, cl = 0, cs = 1, st = 'N'):
+  def __init__ (self, master, text = None, rw = 0, rs = 1, cl = 0, cs = 1, st = 'N', image = None):
     super (MyLabel, self).__init__ (master, text = text, font = (CONF.get ('FONT', 'name'), CONF.get ('FONT', 'size')))
     self.grid (row = rw, rowspan = rs, column = cl, columnspan = cs, sticky = st)
 
